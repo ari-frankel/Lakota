@@ -1,0 +1,18 @@
+dakota_tabular: #PATH TO TEXT FILE WITH DATA
+
+linear_regression: #LINEAR REGRESSION REGION
+        independent: #LIST OF INPUT VARIABLES, SEPARATED BY SPACES e.g. rho Cp epsilon Tinf. REQUIRED
+        dependent: #LIST OF OUTPUT VARIABLES, SEPARATED BY SPACES e.g. T1 T2 T3. REQUIRED
+        type: #REGRESSION TYPE. multiple: regress each dependent variable on all independent variables/ REQUIRED
+		#OAT: one-at-a-time. regress each dependent variable on each independent variable.
+        method: #method for doing least squares. options: QR, SVD. QR is faster, SVD is more robust. use SVD for underdetermined regression or linearly dependent regressors. QR is default.
+        output: #text file to stream outputs to. REQUIRED
+        fitted_output: #text file to stream fitted values to. OPTIONAL
+        report_studentized: #report studentized residuals and p-values for fitted linear regression values. True or False. OPTIONAL, but if True, requires "fitted_output" to be specified
+
+statistics: #STATISTICS REGION
+        variables: #list of output variables, separated by spaces
+        inputs: #list of input variables, separated by spaces
+        output: #text file to stream outputs to. should be unique.
+        histogram: #histogram subregion. optional.
+                numbins: #number of bins for histogram. optional, should be integer. default = 20
