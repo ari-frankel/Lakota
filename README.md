@@ -15,9 +15,13 @@ Theoretically, you could do the same thing with any data set (experiments, other
 provided that the input file is in the proper format.
 
 Speaking of which, input file format is column based text, first line header
+
 var1 var2 var3 varN
+
 num11 num12 num13 num1N
+
 num21 num22 num23 num2N
+
 ...
 
 Capabilities are currently linear regression with hypothesis tests, and simple statistics postprocessing.
