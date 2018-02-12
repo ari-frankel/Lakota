@@ -1,0 +1,17 @@
+dakota_tabular: tabular.dat
+
+linear_regression:
+        independent: X1 X2 X3
+        dependent: Y1 Y2
+        type: OAT 
+        method: qr
+        output: qr.txt 
+        fitted_output: fit.txt
+        report_studentized: True
+
+statistics:
+        variables: Y1 Y2
+        inputs: X1 X2 X3
+        output: stat.txt
+        histogram: 
+                numbins: 20
