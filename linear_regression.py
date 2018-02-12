@@ -2,11 +2,18 @@ import numpy as np
 import sys
 import scipy.stats as stats
 
+#references:
+#wikipedia and the internet
+#Applied Linear Regression, Sanford Weisberg
+
+#if i were smart, I'd rewrite this code to do the linear algebra part just once
+#and reuse the decomposition for each output Y. oh well.
 
 #matrix decomposition methods for least squares
+#X beta = Y, X is inputs, Y is outputs
 #we want beta (the regression coeffs), 
-#(X^T X)^-1 for computing covariances, 
-#and H=X^T(X^T X)^-1 X (the hat matrix) for computing residuals	
+#(X^T X)^-1 for computing covariance matrix of beta, 
+#and H=X (X^T X)^-1 X.T (the hat matrix) for computing residuals	
 
 def SVD(X,Y): #SVD method, ideal for ill-conditioned or rank-deficient systems
 	U, s, V = np.linalg.svd(X)
@@ -17,17 +24,18 @@ def SVD(X,Y): #SVD method, ideal for ill-conditioned or rank-deficient systems
 	p = shape[1]
 	S = np.zeros((N,p))
 	Sp = np.zeros((p,N))
-	for i in range(min(N,p)):
+	for i in range(min(N,p)): #X is underdetermined, rank is less than or equal to min(N,p)
 		S[i,i] = s[i]
-		Sp[i,i] = 1./s[i]
-	V = V.T
+		if s[i] != 0:
+			Sp[i,i] = 1./s[i]
+	V = V.T #so X = U*S*V.T now
 	#USV^T beta = Y
-	#beta = V*pinv(S)*U.T*Y
+	#beta = V*pinv(S)*U.T*Y (pinv = pseudo-inverse)
 	beta = V.dot(Sp.dot(U.T.dot(Y)))
 	#XTXinv = V.dot(np.linalg.pinv(S.T.dot(S)).dot(V.T))	
 	XTXinv = np.linalg.pinv(V.dot(S.T.dot(S.dot(V.T))))
 	r = np.linalg.matrix_rank(X)
-	Ur = U[:,0:r]
+	Ur = U[:,0:r] #the singular vectors corresponding to the non-rank-deficient part of X
 	H = Ur.dot(Ur.T)
 	return beta, XTXinv, H
 
@@ -35,10 +43,10 @@ def QR(X,Y): #QR method, faster in general, asymptotically same speed as SVD wit
 	#X = QR, where Q.T*Q = I (Q is orthonormal), R is upper triangular
 	Q, R = np.linalg.qr(X)
 	#Q*R*beta = Y --> R*beta = Q.T*Y --> beta = R^-1*Q.T*Y
-	beta = np.linalg.solve(R,Q.T.dot(Y))
+	beta = np.linalg.solve(R,Q.T.dot(Y)) #this should be fast
 	#X = QR --> X^T X = R.T*R --> (X^T X)^-1 = (R.T*R)^-1
-	XTXinv = np.linalg.solve(R.T.dot(R),np.eye(len(R)))
-	#some similar linear algebra goes into this equation too
+	XTXinv = np.linalg.solve(R.T.dot(R),np.eye(len(R))) #this might be a bit slow
+	#H = Q R (R.T Q.T Q R)^-1 R.T Q.T = Q R R^-1 R.T^-1 R.T Q.T = Q Q.T (assuming R^-1 exists. if not, use SVD!)
 	H = Q.dot(Q.T)
 
 	return beta, XTXinv, H
@@ -53,7 +61,7 @@ def regress(X,Y,method):
 	else:
 		print("unknown linear regression method " + method + ", reverting to QR\n")
 		beta, XTXinv, H = QR(X,Y)
-	#if we want, can add Cholesky, but there's no reason to
+	#if we want, can add Cholesky and Gauss eliminiation, but there's no reason to
 	return beta, XTXinv, H
 
 def run_regress(X,Y,method):

@@ -45,7 +45,14 @@ class lakota_driver:
 					#t statistics and p-values for each regressor
 					#ANOVA for entire regression
 					#confidence intervals for the entire regression
-		if "linear_regression" in lakota_params.keys():
-			linear_regression.linear_regression(lakota_params['linear_regression'],self.data)
-		if "statistics" in lakota_params.keys():
-			statistics.statistics(lakota_params['statistics'],self.data)	
+					#studentized residuals
+			#stats outputs
+				#means, variances, correlations between each variable and the inputs, histograms
+		try:
+			if "linear_regression" in lakota_params.keys():
+				linear_regression.linear_regression(lakota_params['linear_regression'],self.data)
+			if "statistics" in lakota_params.keys():
+				statistics.statistics(lakota_params['statistics'],self.data)	
+			return 0
+		except:
+			return 1
